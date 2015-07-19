@@ -1,3 +1,24 @@
+/**************************************************
+ MainActivity.java
+
+ Implementation of the initial screen for the
+ ModernArtLab project for Coursera's Programming
+ Mobile Applications for Android Handheld Systems:
+ Part 1
+
+ The screen will display a Mondrian-inspired layout of coloured
+ rectangles whose colours change gradually when the user moves
+ a slider.  The dimensions and colours of the rectangles are
+ generated randomly when the application is loaded.
+
+ The options menu gives the user the ability to visit the website
+ of the Museum of Modern Art (MOMA) on the device's browser.
+
+ Author: arsenyku
+ Copyright (c) 2015
+
+ **************************************************/
+
 package course.labs.modernartlab;
 
 import android.app.Dialog;
@@ -16,7 +37,12 @@ import android.widget.Button;
 
 import static android.content.DialogInterface.*;
 
-
+// MainActivity
+//
+// Handles the options menu for the application and contains
+// the UI fragment which implements the functionality required
+// by the ModernArtLab project.
+//
 public class MainActivity extends AppCompatActivity {
 
     // IDs for menu items
@@ -31,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    // onCreateOptionsMenu
+    // Populates the Options menu with approriate entries
+    //
+    // Parameters:
+    // menu - a reference to the menu being populated.
+    //
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -40,6 +72,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
+    // onOptionsItemSelected
+    // Triggered when the user selects an entry in the Options menu.
+    //
+    // Parameters:
+    // item - an object indicating which option the user selected.
+    //
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -51,6 +90,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ShowMoreInfo
+    //
+    // Performs the actions required when the user selects the
+    // More Information options menu item.
+    //
     private void ShowMoreInfo(){
 
         // custom dialog
@@ -85,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // VisitMomaWebPage
+    //
+    // Performs the actions to start a browser and display
+    // the greeting page of the MOMA web site.
+    //
     private void VisitMomaWebPage(){
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(MOMA_SITE));

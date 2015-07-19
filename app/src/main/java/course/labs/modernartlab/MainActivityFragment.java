@@ -1,3 +1,20 @@
+/**************************************************
+ MainActivityFragment.java
+
+ Implementation of the screen component containing the
+ primary user interface for the ModernArtLab project
+ for Coursera's Programming Mobile Applications for
+ Android Handheld Systems: Part 1
+
+ This fragment implements the random layout of coloured
+ rectangles displayed to the user as well as the slider
+ that lets the user change their colours.
+
+ Author: arsenyku
+ Copyright (c) 2015
+
+ **************************************************/
+
 package course.labs.modernartlab;
 
 import android.animation.ArgbEvaluator;
@@ -32,9 +49,13 @@ import java.util.Random;
 import java.util.zip.Inflater;
 
 
-/**
- * A placeholder fragment containing a simple view.
- */
+
+// MainActivityFragment
+//
+// Displays a Mondrian-inspired screen layout containing
+// coloured shapes which change when a slider is moved on
+// screen.
+//
 public class MainActivityFragment extends Fragment {
 
     final static String LOGTAG = "modartlab";
@@ -53,15 +74,31 @@ public class MainActivityFragment extends Fragment {
     }
 
 
+    // getRandom
+    // Gets a random integer between the specified min and max values.
+    //
+    // Parameters:
+    // min - the minimum value possible for the resulting random integer.
+    // max - the maximum value possible for the resulting random integer.
+    //
     private int getRandom(int min, int max){
         return (new Random()).nextInt(max - min) + min;
     }
 
+
+    // randomColor
+    // Generates an integer representing a random color
+    //
     private int randomColor()
     {
         return getRandom(0xff000000, 0xffffffff);
     }
 
+
+    // TileColors
+    // A class to contain the start and enp points of a color
+    // spectrum.
+    //
     class TileColors{
         public int StartColor = 0;
         public int EndColor = 0;
@@ -72,9 +109,16 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
+
+    // DrawTiles
+    // Draws rectangles on screen that form part of the Mondrian-inspired
+    // layout being displayed for the user.  There will be 5 tiles drawn
+    // with random dimensions and random colours, except for one random tile
+    // which will have a fixed white colour.
+    //
     private void DrawTiles() {
 
-        final int NumTiles = 5;
+        final int NumTiles = 5;   // Always 5 tiles will be drawn
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -89,6 +133,8 @@ public class MainActivityFragment extends Fragment {
         lp = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.MATCH_PARENT, WEIGHT_SUM-weight);
         mTilesLayout.addView(right, lp);
+
+        // Create the tiles and add them to the UI
 
         for (int i=0; i<NumTiles; i++){
             View tile = inflater.inflate(R.layout.tile, null, false);
@@ -139,6 +185,11 @@ public class MainActivityFragment extends Fragment {
 
     }
 
+    // OnCreateView
+    // Method called by the system to create and populate the UI fragment.
+    // The fragment is first created from a Layout then the required colour tiles
+    // are created dynamically.
+    //
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -153,6 +204,9 @@ public class MainActivityFragment extends Fragment {
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
+            // OnProgressChanged
+            // Change the colours of the tiles when the seekbar's progress value changes.
+            //
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
