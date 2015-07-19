@@ -3,6 +3,7 @@ package course.labs.modernartlab;
 import android.animation.ArgbEvaluator;
 import android.app.ActionBar;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.zip.Inflater;
 
@@ -37,12 +39,14 @@ public class MainActivityFragment extends Fragment {
 
     final static String LOGTAG = "modartlab";
 
-//    final static int AXIS_VERTICAL = 0;
-//    final static int AXIS_HORIZONTAL = 0;
+    final int TILE_MARGIN = 10;
+    final int WEIGHT_SUM = 100;
+    final int WHITE = 0xffffffff;
 
     private RelativeLayout mFragmentView = null;
     private LinearLayout mTilesLayout = null;
     private SeekBar mSeekBar = null;
+    private ArrayList<View> mTiles = new ArrayList<View>();
     final static private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
 
     public MainActivityFragment() {
@@ -53,72 +57,85 @@ public class MainActivityFragment extends Fragment {
         return (new Random()).nextInt(max - min) + min;
     }
 
+    private int randomColor()
+    {
+        return getRandom(0xff000000, 0xffffffff);
+    }
 
+    class TileColors{
+        public int StartColor = 0;
+        public int EndColor = 0;
+
+        public TileColors(int startColor, int endColor){
+            StartColor = startColor;
+            EndColor = endColor;
+        }
+    }
 
     private void DrawTiles() {
-/*    }
 
-    private void foobar(){*/
+        final int NumTiles = 5;
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         LinearLayout left = new LinearLayout(getActivity());
         LinearLayout right = new LinearLayout(getActivity());
 
-        int weight = getRandom(2,8);
+        int weight = getRandom(20,80);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.MATCH_PARENT, weight);
         mTilesLayout.addView(left, lp);
 
         lp = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.MATCH_PARENT, 10-weight);
+                0, LinearLayout.LayoutParams.MATCH_PARENT, WEIGHT_SUM-weight);
         mTilesLayout.addView(right, lp);
 
-        View tile1 = inflater.inflate(R.layout.tile, null, false);
-        View tile2 = inflater.inflate(R.layout.tile, null, false);
-        View tile3 = inflater.inflate(R.layout.tile, null, false);
-        View tile4 = inflater.inflate(R.layout.tile, null, false);
-        View tile5 = inflater.inflate(R.layout.tile, null, false);
+        for (int i=0; i<NumTiles; i++){
+            View tile = inflater.inflate(R.layout.tile, null, false);
+            TileColors tc = new TileColors(randomColor(), randomColor());
+            tile.setBackgroundColor(tc.StartColor);
+            tile.setTag(tc);
+            mTiles.add(tile);
+        }
 
-        tile1.setBackgroundColor(getRandom(0xff000000, 0xffffffff));
-        tile2.setBackgroundColor(getRandom(0xff000000, 0xffffffff));
-        tile3.setBackgroundColor(getRandom(0xff000000, 0xffffffff));
-        tile4.setBackgroundColor(getRandom(0xff000000, 0xffffffff));
-        tile5.setBackgroundColor(getRandom(0xff000000, 0xffffffff));
+        // Determine which tile will be WHITE
+        int whiteTile =getRandom(0,NumTiles);  // Generate a number from 0 to 4
+        View tile = mTiles.get(whiteTile);
+        tile.setBackgroundColor(WHITE);
+        ((TileColors)tile.getTag()).StartColor = WHITE;
+        ((TileColors)tile.getTag()).EndColor = WHITE;
 
         left.setOrientation(LinearLayout.VERTICAL);
 
         weight = getRandom(1,70);
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, weight);
-        lp.setMargins(10,10,10,10);
-        left.addView(tile1, lp);
+        lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
+        left.addView(mTiles.get(0), lp);
 
         lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 100-weight);
-        lp.setMargins(10,10,10,10);
-        left.addView(tile2, lp);
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, WEIGHT_SUM-weight);
+        lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
+        left.addView(mTiles.get(1), lp);
 
         right.setOrientation(LinearLayout.VERTICAL);
 
         weight = getRandom(1,70);
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, weight);
-        lp.setMargins(10,10,10,10);
-        right.addView(tile3, lp);
+        lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
+        right.addView(mTiles.get(2), lp);
 
         int weight2 = getRandom(20, 100 - weight);
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, weight2);
-        lp.setMargins(10,10,10,10);
-        right.addView(tile4, lp);
+        lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
+        right.addView(mTiles.get(3), lp);
 
         lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 100-weight-weight2);
-        lp.setMargins(10,10,10,10);
-        right.addView(tile5, lp);
-
-        argbEvaluator.evaluate(mSeekBar.getProgress(), 0, mSeekBar.getMax());
-
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, WEIGHT_SUM-weight-weight2);
+        lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
+        right.addView(mTiles.get(4), lp);
 
     }
 
@@ -134,22 +151,31 @@ public class MainActivityFragment extends Fragment {
         DrawTiles();
 
 
-
-
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
-            public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+
+                for (View tile : mTiles) {
+                    TileColors tc = (TileColors)tile.getTag();
+                    int newColor = (Integer)new ArgbEvaluator().evaluate(
+                            (float)progress/seekBar.getMax(),
+                            tc.StartColor, tc.EndColor);
+
+                    tile.setBackgroundColor(newColor);
+                }
+
+
+
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
         });
