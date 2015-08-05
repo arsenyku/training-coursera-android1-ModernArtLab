@@ -18,35 +18,16 @@
 package course.labs.modernartlab;
 
 import android.animation.ArgbEvaluator;
-import android.app.ActionBar;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Shader;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.Shape;
-import android.nfc.Tag;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.EventLogTags;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.zip.Inflater;
 
 
 
@@ -125,10 +106,17 @@ public class MainActivityFragment extends Fragment {
         LinearLayout left = new LinearLayout(getActivity());
         LinearLayout right = new LinearLayout(getActivity());
 
+        // Screen will be split vertically first.
+
+        // Left side will occupy between 20-80% of width of screen
+
         int weight = getRandom(20,80);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.MATCH_PARENT, weight);
         mTilesLayout.addView(left, lp);
+
+        // Right side will occupy whatever remains of the screen width
+        // after the width of the left side has been determined.
 
         lp = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.MATCH_PARENT, WEIGHT_SUM-weight);
@@ -151,33 +139,44 @@ public class MainActivityFragment extends Fragment {
         ((TileColors)tile.getTag()).StartColor = WHITE;
         ((TileColors)tile.getTag()).EndColor = WHITE;
 
+        // Left side will have 2 tiles stacked vertically.
+
         left.setOrientation(LinearLayout.VERTICAL);
 
-        weight = getRandom(1,70);
+        // First tile will occupy 10-70% of screen height.
+        weight = getRandom(10,70);
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, weight);
         lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
         left.addView(mTiles.get(0), lp);
 
+        // Second tile will occupy whatever remains of screen height.
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, WEIGHT_SUM-weight);
         lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
         left.addView(mTiles.get(1), lp);
 
+        // Right side will have 3 tiles stacked vertically.
+
         right.setOrientation(LinearLayout.VERTICAL);
 
-        weight = getRandom(1,70);
+        // First tile will randomly occupy 10-70% of screen height.
+        weight = getRandom(10,70);
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, weight);
         lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
         right.addView(mTiles.get(2), lp);
 
-        int weight2 = getRandom(20, 100 - weight);
+        // Second tile will randomly occupy between 20-80% of height
+        // depending on the height of the first tile.
+        int weight2 = getRandom(20, WEIGHT_SUM - weight - 10);
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, weight2);
         lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
         right.addView(mTiles.get(3), lp);
 
+        // Third tile will randomly occupy between 10-70% of screen height
+        // depending on the heights of the other tiles.
         lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, WEIGHT_SUM-weight-weight2);
         lp.setMargins(TILE_MARGIN, TILE_MARGIN, TILE_MARGIN, TILE_MARGIN);
@@ -213,7 +212,7 @@ public class MainActivityFragment extends Fragment {
 
                 for (View tile : mTiles) {
                     TileColors tc = (TileColors)tile.getTag();
-                    int newColor = (Integer)new ArgbEvaluator().evaluate(
+                    int newColor = (Integer)argbEvaluator.evaluate(
                             (float)progress/seekBar.getMax(),
                             tc.StartColor, tc.EndColor);
 
